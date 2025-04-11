@@ -6,9 +6,9 @@
 $gray-medium-light: #eaeaea;
 
 /* universal */
-
+// padding-top: 60pxからnavがデカすぎるため200で避難中
 body {
-  padding-top: 60px;
+  padding-top: 200px; 
 }
 
 section {
