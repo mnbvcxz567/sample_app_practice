@@ -42,6 +42,10 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
+  host = 'miniature-tribble-wwgxpx66pj43g45p-3000.app.github.dev' # ここをコピペすると失敗します。自分の環境のホストに変えてください。
+  # クラウドIDEの場合は以下をお使いください
+  config.action_mailer.default_url_options = { host: host, protocol: 'https' }
+
   config.action_mailer.perform_caching = false
 
   # Print deprecation notices to the Rails logger.
