@@ -32,7 +32,7 @@
   "updateContentCommand": "bundle install",
   "postCreateCommand": "",
   "postAttachCommand": {
-    "server": "rails server"
+    "server": "rails server -b 0.0.0.0"
   },
   "customizations": {
     "codespaces": {
