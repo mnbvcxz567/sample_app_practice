@@ -1,5 +1,13 @@
 class User < ApplicationRecord
   has_many :microposts, dependent: :destroy
+  has_many :active_relationships,  class_name:  "Relationship",
+                                     foreign_key: "follower_id",
+                                     dependent:   :destroy
+  has_many :passive_relationships, class_name:  "Relationship",
+                                     foreign_key: "followed_id",
+                                     dependent:   :destroy
+  has_many :following, through: :active_relationships,  source: :followed
+  has_many :followers, through: :passive_relationships, source: :follower
   attr_accessor :remember_token, :activation_token, :reset_token
 
   before_save   :downcase_email
@@ -80,12 +88,33 @@ class User < ApplicationRecord
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
   end
-
-  # 試作feedの定義
-  # 完全な実装は次章の「ユーザーをフォローする」を参照
-  def feed
-    Micropost.where('user_id = ?', id)
+  def self.digest(string)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+    BCrypt::Password.create(string, cost: cost)
   end
+
+ # ユーザーのステータスフィードを返す
+ def feed
+  following_ids = "SELECT followed_id FROM relationships
+                   WHERE  follower_id = :user_id"
+  Micropost.where("user_id IN (#{following_ids})
+                   OR user_id = :user_id", user_id: id)
+end
+
+ # ユーザーをフォローする
+ def follow(other_user)
+  following << other_user unless self == other_user
+end
+
+# ユーザーをフォロー解除する
+def unfollow(other_user)
+  following.delete(other_user)
+end
+
+# 現在のユーザーが他のユーザーをフォローしていればtrueを返す
+def following?(other_user)
+  following.include?(other_user)
+end
 
   private
 
