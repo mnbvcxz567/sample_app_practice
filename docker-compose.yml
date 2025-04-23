@@ -3,4 +3,4 @@ default: &default
   encoding: unicode
   username: postgres
   password: password
-  host: db
+  host: db  
